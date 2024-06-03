@@ -16,8 +16,14 @@ app.all("*", (req, res, next) => {
 //Global error handling middleware
 app.use(globalError);
 if (process.env.NODE_ENV === "dev") app.use(morgan("dev"));
-console.log(process.env.PORT);
 const PORT = process.env.PORT;
-app.listen(PORT || 3030, () => {
+const server = app.listen(PORT || 3030, () => {
   console.log("App running");
+});
+process.on("unhandledRejection", (err) => {
+  console.error("unhandledRejection: ", err.name, "|", err.message);
+  server.close(() => {
+    console.error("Shutting down ...");
+    process.exit(1);
+  });
 });
