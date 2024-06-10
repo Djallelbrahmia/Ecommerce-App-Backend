@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { setImageUrl } = require("../utils/constants");
+
 const categorySchema = new mongoose.Schema(
   {
     name: {
@@ -16,5 +18,8 @@ const categorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+categorySchema.post("init", setImageUrl);
+categorySchema.post("save", setImageUrl);
 const CatergoryModel = mongoose.model("Category", categorySchema);
 module.exports = CatergoryModel;
