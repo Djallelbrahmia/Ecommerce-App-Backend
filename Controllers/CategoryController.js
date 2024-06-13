@@ -1,4 +1,3 @@
-const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
 const asyncHandler = require("express-async-handler");
@@ -40,15 +39,15 @@ exports.getCategories = getAll(Category);
 exports.getCategory = getOne(Category);
 // @desc   Create category
 // @route  Post /api/v1/categories
-// @access private
+// @access private /Admin and Manger
 exports.createCategory = createOne(Category);
 
 // @desc  Update specific category
 // @route  PUT /api/v1/categories/:id
-// @access private
+// @access private /Admin and manager
 
 exports.updateCategory = updateOne(Category);
 // @desc  Delete specific category
 // @route  Delete /api/v1/categories/:id
-// @access private
+// @access private /Admin
 exports.deleteCategory = deleteOne(Category);
