@@ -59,7 +59,7 @@ exports.getProducts = getAll(Product, "Products");
 // @desc   Get  product By Id
 // @route Get /api/v1/product/:id
 //access Public
-exports.getProduct = getOne(Product);
+exports.getProduct = getOne(Product, "reviews");
 // @desc   Create product
 //@route POST /api/v1/product
 //access Private

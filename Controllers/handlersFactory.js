@@ -10,10 +10,14 @@ exports.deleteOne = (Model) =>
       return next(new ApiError(`No ${Model} for this id ${id}`, 404));
     res.status(204).send();
   });
-exports.getOne = (Model) =>
+exports.getOne = (Model, populationOpts) =>
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const document = await Model.findById(id);
+    const query = Model.findById(id);
+    if (populationOpts) {
+      query.populate(populationOpts);
+    }
+    const document = await query;
     if (!document)
       return next(new ApiError(`No ${Model} for this id ${id}`, 404));
     res.status(200).json({ data: document });
@@ -24,6 +28,7 @@ exports.getAll = (Model, modelName = "") =>
     if (req.filterObject) {
       filter = req.filterObject;
     }
+
     const documentCount = await Model.countDocuments();
     const { query, paginationResults } = new ApiFeatures(
       Model.find(filter),
@@ -49,6 +54,7 @@ exports.updateOne = (Model) =>
     });
     if (!document)
       return next(new ApiError(`No ${Model} for this id ${id}`, 404));
+    document.save();
     res.status(200).json({ data: document });
   });
 

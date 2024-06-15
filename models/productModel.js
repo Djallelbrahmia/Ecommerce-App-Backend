@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { setImageUrl } = require("../utils/constants");
 
 const productSchema = new mongoose.Schema(
   {
@@ -70,8 +69,25 @@ const productSchema = new mongoose.Schema(
       ref: "Brand",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
+  }
 );
+
+productSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "product",
+  justOne: false,
+  options: { sort: { createdAt: -1 } },
+});
+
 productSchema.pre("/^find/", function (next) {
   this.populate({
     path: "category",

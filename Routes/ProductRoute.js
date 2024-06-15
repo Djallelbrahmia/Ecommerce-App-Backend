@@ -10,7 +10,7 @@ const {
 } = require("../Controllers/ProductController");
 
 const { protect, allowedTo } = require("../Controllers/AuthController");
-
+const ReviewRoute = require("./ReviewRoute");
 const {
   getProductValidator,
   updateProductValidator,
@@ -19,6 +19,8 @@ const {
 } = require("../utils/validators/productValidator");
 
 const router = express.Router();
+router.use("/:productId/review", ReviewRoute);
+
 router
   .route("/")
   .get(getProducts)

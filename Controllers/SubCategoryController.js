@@ -16,7 +16,7 @@ exports.setCategoryIdToBody = (req, res, next) => {
 exports.createFilterObject = (req, res, next) => {
   let filterObject = {};
   if (req.params.categoryId) filterObject = { category: req.params.categoryId };
-  req.body.filterObject = filterObject;
+  req.filterObject = filterObject;
   next();
 };
 // @desc   Get list of categories
