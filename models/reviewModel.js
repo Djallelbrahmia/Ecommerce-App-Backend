@@ -57,8 +57,8 @@ reviewSchema.statics.calcAverageRatingsandQuantity = async function (
 reviewSchema.post("save", async function () {
   await this.constructor.calcAverageRatingsandQuantity(this.product);
 });
-reviewSchema.post("remove", async function () {
-  await this.constructor.calcAverageRatingsandQuantity(this.product);
+reviewSchema.post("findOneAndDelete", async (doc) => {
+  await doc.constructor.calcAverageRatingsandQuantity(doc.product);
 });
 reviewSchema.pre(/^find/, function (next) {
   this.populate({

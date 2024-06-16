@@ -39,6 +39,27 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    addresses: [
+      {
+        id: { type: mongoose.Schema.ObjectId },
+        alias: {
+          type: String,
+        },
+        details: {
+          type: String,
+        },
+        phone: {
+          type: String,
+        },
+        postalCode: String,
+      },
+    ],
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   { timestamps: true }
 );
