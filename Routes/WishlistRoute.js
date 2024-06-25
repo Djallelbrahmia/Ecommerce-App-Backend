@@ -7,6 +7,7 @@ const {
 const { protect, allowedTo } = require("../Controllers/AuthController");
 
 const router = express.Router();
+
 router.use(protect, allowedTo("user"));
 router.route("/").post(addProductToWishlist).get(getWishlist);
 router.route("/:productId").delete(removeProductFromWishlist);

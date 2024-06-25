@@ -60,16 +60,15 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
         price: product.price,
       });
     }
-
-    cart.totalCartPrice = calcTotalCartPrice(cart);
-    await cart.save();
-    res.status(200).json({
-      status: "Success",
-      numberOfItems: cart.cartitems.length,
-
-      data: cart,
-    });
   }
+  cart.totalCartPrice = calcTotalCartPrice(cart);
+  await cart.save();
+  res.status(200).json({
+    status: "Success",
+    numberOfItems: cart.cartitems.length,
+
+    data: cart,
+  });
 });
 
 // @desc   Delete Product from user  cart
