@@ -148,6 +148,7 @@ exports.webhookCheckout = asyncHandler(async (req, res, next) => {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+    console.log(event);
   } catch (err) {
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
