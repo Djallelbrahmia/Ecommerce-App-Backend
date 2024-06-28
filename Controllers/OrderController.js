@@ -5,6 +5,7 @@ const Order = require("../models/orderModel");
 const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
 const { getAll, getOne } = require("./handlersFactory");
+const User = require("../models/userModel");
 
 //desc create cash order
 //@route POST /api/v1/orders/:cartId
@@ -136,27 +137,60 @@ exports.getCheckoutSession = asyncHandler(async (req, res, next) => {
     data: session,
   });
 });
+const createCardOrder = async (session) => {
+  const cartId = session.client_reference_id;
+  const shippingAddress = session.metadata;
+  const orderPrice = session.amount_total / 100;
+  const cart = await Cart.findById(cartId);
+  const user = await User.findOne({ email: session.customer_email });
+  const order = await Order.create({
+    user: user._id,
+    orderitems: cart.cartitems,
+    totalPrice: orderPrice,
+    shippingAddress: shippingAddress,
+    isPaid: true,
+    paidAt: Date.now(),
+    paymentMethod: "card",
+  });
+  if (order) {
+    const bulkOption = cart.cartitems.map((cartItem) => ({
+      updateOne: {
+        filter: { _id: cartItem.product },
+        update: {
+          $inc: {
+            quantity: -cartItem.quantity,
+            sold: +cartItem.quantity,
+          },
+        },
+      },
+    }));
+
+    await Product.bulkWrite(bulkOption, {});
+    await Cart.findByIdAndDelete(cartId);
+  }
+};
 
 exports.webhookCheckout = asyncHandler(async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
 
   let event;
-  console.log("Checkout");
   try {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-    console.log(event);
   } catch (err) {
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
-
+  if (event.type === "checkout.session.completed") {
+    createCardOrder(event.data.object);
+  }
   // Handle the event
-  console.log(`Unhandled event type ${event.type}`);
 
   // Return a 200 response to acknowledge receipt of the event
-  res.send();
+  res.status.json({
+    received: true,
+  });
 });
